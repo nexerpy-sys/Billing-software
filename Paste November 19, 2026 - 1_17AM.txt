@@ -1,0 +1,1726 @@
+ORVA — MASTER DEVELOPMENT PROMPT 1 OF 3
+
+Permanent Application Foundation, Billing Engine Integration & Core Transaction Reliability
+
+Product: ORVA — Pharmacy Billing & Inventory
+Publisher: Rindle Works
+Developer: Gemini 4 Argon
+Development stage: 1 of 3
+Target: A real, permanent Windows application — not a prototype.
+
+---
+
+PART A — YOUR ROLE AND RESPONSIBILITY
+
+You are the primary implementation developer for this stage of ORVA.
+
+You are not being asked to act as a consultant, reviewer or bug-finding assistant.
+
+You must perform actual software development.
+
+Your responsibilities are:
+
+1. Read and understand the complete project requirements.
+2. Inspect the supplied source code and existing implementation handoffs.
+3. Reconcile the separate source contributions.
+4. Integrate the backend, WPF interface, database and application startup.
+5. Correct known defects that affect the core billing workflow.
+6. Implement the missing configuration required for reliable billing.
+7. Make the permanent application buildable and internally consistent.
+8. Produce the complete updated source project and a detailed handoff report.
+
+Do not return a development plan instead of code.
+
+Do not simply explain what needs to be implemented.
+
+Do not create another disposable prototype.
+
+Do not replace the existing application with an entirely new architecture just because starting from scratch seems easier.
+
+ORVA already has a real WPF application foundation and several implementation contributions. Preserve and extend them.
+
+The user has explicitly authorised you to perform the development work. Older project conversations in which Gemini was assigned only a testing role do not restrict this assignment.
+
+ChatGPT will act as the subsequent integration reviewer. Your code must therefore be complete, traceable and understandable to another developer.
+
+---
+
+PART B — UNDERSTAND THE PROJECT HISTORY BEFORE CODING
+
+The project has been developed through several discussions. Some early decisions were subsequently reversed.
+
+The governing project history is:
+
+- Chat 1 and Chat 2: Original product requirements, workflows, design decisions and business goals.
+- Chat 3: Detailed requirements review and, importantly, the client's later clarification that the software is Windows-only.
+- Chat 5: Latest development status, source contributions, billing contract, known defects and integration history.
+
+If these conversations or their exports are attached, read them fully.
+
+Do not rely on an old summary when the original source material is available.
+
+Authority of decisions
+
+Use the following priority:
+
+1. The client's actual requirements and later explicit corrections.
+2. Latest ORVA project decisions.
+3. The frozen billing contract.
+4. Existing source implementation where it is compatible with the requirements.
+5. Older suggestions only where they have not been superseded.
+
+Where an earlier idea conflicts with a later explicit decision, follow the later decision.
+
+Never resurrect rejected features merely because they appear in older discussions.
+
+---
+
+PART C — THE PRODUCT WE ARE BUILDING
+
+1. Product identity
+
+ORVA
+
+Pharmacy Billing & Inventory
+
+A product by:
+
+RINDLE WORKS
+
+These names are working commercial identities. Legal and trademark clearance in India remains pending.
+
+ORVA is intended to become a reusable commercial product that can be sold to multiple independent medical shops.
+
+It must not become a custom application hardcoded for only the first customer.
+
+Each shop receives the same application and installer, but its own independent local business database.
+
+Example:
+
+- Shop A: its own installation and database.
+- Shop B: its own installation and database.
+- Shop C: its own installation and database.
+
+There is no shared customer business database.
+
+2. Final platform decision
+
+Windows-only native desktop application.
+
+The first client has confirmed that he will use the application on his Windows 10 laptop only.
+
+The following have been permanently removed from Version 1:
+
+- Android application.
+- Flutter.
+- Dart.
+- Kotlin.
+- Jetpack Compose.
+- PWA.
+- Website or WebView application.
+- Wi-Fi synchronisation.
+- Phone-to-laptop synchronisation.
+- Cloud business-data database.
+- Device pairing.
+- Multi-device sync queues.
+- Distributed stock reconciliation.
+
+Do not build these features.
+
+Do not leave unnecessary Android or synchronisation architecture in the project.
+
+3. Technology foundation
+
+The intended technology is:
+
+Component| Technology
+Desktop application| Native WPF
+Language| C# 7.3
+Framework| .NET Framework
+Current source target| "net48"
+Database| SQLite
+SQLite provider| System.Data.SQLite.Core 1.0.119
+Printing| Windows printing pipeline
+Storage| Local Windows file system
+Operation| Fully offline
+
+There is a discrepancy in the historical documentation: some documents describe .NET Framework 4.8.1, while the actual baseline project uses "net48".
+
+Investigate this discrepancy.
+
+Do not casually change the project's target framework. Confirm which target is compatible with the actual Windows 10 deployment requirement and available build tools.
+
+Preserve C# 7.3 compatibility.
+
+Do not introduce language features that require newer C# versions.
+
+Avoid unnecessary new libraries and dependencies.
+
+The existing SQLite provider should remain the starting point unless you establish a concrete compatibility problem.
+
+4. Encryption decision
+
+The user explicitly rejected encryption.
+
+Use:
+
+- Ordinary SQLite.
+- Plain database files.
+- Ordinary unencrypted backups.
+- No SQLCipher.
+- No encryption keys.
+- No key-management subsystem.
+- No encrypted archives.
+- No TLS/certificate architecture for nonexistent business-data synchronisation.
+
+Do not add encryption because you consider it a general best practice.
+
+Data integrity, transaction safety and recovery are the priorities.
+
+---
+
+PART D — NON-NEGOTIABLE USER EXPERIENCE
+
+The actual shop owner and staff have limited experience with complicated billing applications.
+
+The application must be comfortable for people who understand basic computer operations but are not technically sophisticated.
+
+This is one of ORVA's core product requirements.
+
+Do not design it as though its users are accountants, programmers or experienced ERP operators.
+
+Required behaviour
+
+- No routine login screen.
+- No separate owner or staff accounts.
+- No employee roles.
+- No permission-management system.
+- No staff passwords.
+- No unnecessary user onboarding.
+- No technical terminology in ordinary workflows.
+- No excessive forms.
+- No unnecessary optional questions.
+- No feature that forces staff to stop and read instructions repeatedly.
+
+After the one-time shop setup, the application should open directly to New Billing.
+
+The staff should be able to begin billing immediately.
+
+Language
+
+English and Bengali:
+
+- English.
+- বাংলা.
+
+A visible language switch must be placed at the very bottom of the hamburger menu.
+
+Changing language changes interface labels and instructions only.
+
+It must not translate or alter:
+
+- Medicine names.
+- Batch numbers.
+- Invoice identifiers.
+- Historical transaction records.
+- Business data.
+
+Use professional, straightforward language. Do not make the interface childish or excessively simplified.
+
+Interaction requirements
+
+- Icons must always have readable accompanying labels.
+- Buttons must be comfortable to click.
+- Text and monetary amounts must be readable.
+- Minimise typing.
+- Use automatic calculations.
+- Present clear errors.
+- Confirm important destructive operations.
+- Keep important buttons in predictable locations.
+- Do not block staff with unnecessary configuration prompts.
+
+---
+
+PART E — PERMANENT VISUAL IDENTITY
+
+ORVA must look like a deliberately designed commercial product, not a generic pharmacy ERP dashboard.
+
+Use the approved artistic direction.
+
+1. Exact colour system
+
+Colour| Hex| Purpose
+Warm paper| "#F3EADA"| Main surfaces and background
+Deep charcoal teal| "#172C30"| Structure, navigation and primary buttons
+Ink black| "#1A1712"| Typography, rules and fine detail
+Vermilion| "#FF4B1F"| Important highlights and signature accents
+Raised paper| "#FBF7EF"| Raised panels
+Recessed paper| "#E7DCC6"| Input and secondary surfaces
+
+Primary buttons should generally use deep charcoal teal with warm-paper text.
+
+Ink black is not the primary filled-button colour.
+
+Vermilion must be selective. Do not make every popup, notification or button red-orange.
+
+Warm amber is explicitly rejected. Do not reintroduce it.
+
+2. Design references
+
+Use the strongest techniques from:
+
+- MIS·REGISTER: print-inspired editorial identity.
+- ATELIER VÉSPER: architectural precision, grids and fine geometry.
+- FIELDNOTES: performance-conscious animation practices.
+- THE MUSEUM OF ALMOSTS: selected archival details and distinctive interactions.
+- OTHERFORM: contemporary composition and presentation.
+
+Do not copy any reference wholesale.
+
+Build an original ORVA visual identity.
+
+3. Signature scalloped edge
+
+This detail is especially important.
+
+ORVA has a signature repeated semicircular cut-out edge:
+
+- Warm-paper surface.
+- Repeated semicircular curves along an edge.
+- Vermilion layer visible behind the curves.
+- A precise perforated or die-cut paper-ticket appearance.
+
+It must not be replaced with ordinary rounded corners, dashed lines or dotted borders.
+
+Use it selectively for distinctive visual moments, particularly the successful-invoice treatment and selected decorative components.
+
+Do not put it everywhere.
+
+4. Typography
+
+The intended typography system is:
+
+Purpose| Font
+Latin headings| Noto Serif
+Bengali headings| Noto Serif Bengali
+Latin interface| Noto Sans
+Bengali interface| Noto Sans Bengali
+Identifiers and metadata| IBM Plex Mono
+
+All required font assets must work offline.
+
+Bundle actual legally licensed font files and their licence notices when available.
+
+Do not create fake font files, pretend a font is bundled when it is not, or reference remote Google Fonts.
+
+5. Surface treatments
+
+Use:
+
+- Subtle paper grain on decorative surfaces.
+- Fine architectural rules.
+- Registration marks.
+- Restrained two-colour overprinting.
+- Carefully aligned panels.
+- Expressive headings.
+- Clean functional tables.
+- Solid readable backgrounds behind billing and inventory data.
+
+Never allow decoration to interfere with medicine names, quantities, prices, tables or important controls.
+
+6. Motion and animation
+
+A single light theme is mandatory.
+
+No dark mode.
+
+Animations should be smooth, natural and lightweight.
+
+Examples:
+
+- Navigation transitions.
+- Button press feedback.
+- Dialog transitions.
+- Stock-entry confirmation.
+- Barcode scan feedback.
+- Expiry warning cues.
+- Invoice success confirmation.
+
+The invoice confirmation must be particularly satisfying.
+
+However:
+
+The database transaction must commit before the success animation begins.
+
+Animation must never delay invoice saving, printing, stock deduction or other essential operations.
+
+---
+
+PART F — EXISTING SOURCE MATERIAL
+
+You may receive the following files or extracted source handoffs.
+
+Inspect every supplied source carefully.
+
+1. Original source baseline
+
+"ORVA_AI_Development_Kit_v2(3).zip"
+
+This contains the actual early WPF application foundation, including:
+
+- WPF application shell.
+- SQLite database connection.
+- Original database schema.
+- Database migration runner.
+- Shop setup.
+- ShopRepository.
+- InventoryRepository.
+- StockEntryService.
+- StockSnapshotWriter.
+- Inventory screens.
+- Add Stock workflow.
+- English and Bengali resources.
+- Application paths.
+- AppSettingsRepository.
+- Frozen BillingContracts.cs.
+- Installer scaffolding.
+
+This is the permanent application foundation.
+
+Preserve its existing working functionality.
+
+2. Gemini backend contribution
+
+"02-GEMINI-BACKEND/ORVA.zip"
+
+This contains the previously generated billing implementation, including:
+
+- "002_BillingTaxConfig.sql"
+- Updated "DatabaseMigrator.cs"
+- "BillingClock.cs"
+- "BillingModels.cs"
+- "FefoAllocator.cs"
+- "InvoiceCalculator.cs"
+- "BillingRepository.cs"
+- "BillingService.cs"
+- Billing unit tests and test fixtures.
+
+Inspect and integrate the actual files.
+
+Do not assume the contribution has already been merged into the baseline.
+
+3. Qwen WPF contribution
+
+Use:
+
+- Qwen Batch 2R.
+- Qwen Batch 3.
+- Qwen Batch 4.
+
+Batch 2 is superseded. Never use it.
+
+Batch 2R is the corrected BillingViewModel handoff.
+
+These contributions contain:
+
+- BillingViewModel.
+- BillingView.
+- BillingView code-behind.
+- Search and medicine cart behaviour.
+- Payment interface.
+- Preview window.
+- InvoicePaperPreviewControl.
+- English resources.
+- Bengali resources.
+- 58 mm, 80 mm, A4 and A5 preview layouts.
+
+Extract the actual source from the supplied handoff documents. Preserve file paths.
+
+4. Stage 1 integration patch
+
+"ORVA_Stage1_Integration_Patch_v3.zip"
+
+This is an overlay, not a complete application.
+
+It contains application wiring, support classes and a safety-patch script.
+
+Review its actual files before applying them.
+
+Do not assume the patch has already been applied.
+
+Do not blindly run PowerShell search-and-replace scripts without verifying that their exact target files and patterns match.
+
+5. Frozen billing contract
+
+The authoritative contract is:
+
+"src/Orva.Desktop/Domain/Billing/BillingContracts.cs"
+
+The standalone contract documentation is:
+
+"BILLING_UI_BACKEND_CONTRACT_v1.md"
+
+Treat it as frozen.
+
+Do not silently redesign its interface.
+
+If an absolutely necessary modification is discovered, document the reason, version the contract explicitly and update every dependent implementation consistently.
+
+The contract is:
+
+public interface IBillingService
+{
+    IList<MedicineLookupResult> SearchMedicines(string query, int maximumResults);
+
+    InvoicePreviewResult PreviewInvoice(InvoiceDraft draft);
+
+    InvoiceResult FinalizeInvoice(InvoiceDraft draft);
+}
+
+The UI supplies medicine IDs and requested quantities, optional customer information and payment tenders.
+
+The UI must not supply:
+
+- Medicine prices.
+- Batch IDs.
+- Expiry dates.
+- GST rates.
+- HSN codes.
+- Tax classifications.
+- Stock status.
+- Calculated totals.
+
+These must be derived from trusted backend/database information.
+
+---
+
+PART G — STAGE 1 DEVELOPMENT OBJECTIVE
+
+Build one integrated, functioning core application.
+
+The central goal of this stage is to combine the original application foundation, billing backend and WPF billing interface into one coherent, maintainable application.
+
+This stage must deliver:
+
+1. A working WPF application structure.
+2. Proper startup and application-service registration.
+3. Successful database migration integration.
+4. A functional New Billing workflow.
+5. A fully integrated billing backend.
+6. An integrated WPF billing interface.
+7. A live invoice preview using backend values.
+8. Safe invoice finalisation.
+9. Correct stock deduction.
+10. Explicit tax configuration.
+11. Safe stock-snapshot dirty-state handling.
+12. A complete updated source project.
+
+Do not expand this stage into every remaining ORVA module.
+
+Later stages will cover the remaining product features.
+
+---
+
+PART H — PROJECT INTEGRATION
+
+1. Preserve the original WPF application
+
+Use the existing project structure.
+
+Do not create another unrelated WPF solution.
+
+Do not replace the SQLite database with:
+
+- SQL Server.
+- Firebase.
+- Supabase.
+- MongoDB.
+- Cloud storage.
+- A remote API.
+
+Continue using the existing SQLite database.
+
+There must be one local shop database per installation.
+
+2. Service registration
+
+Integrate the billing service properly.
+
+Required connections include:
+
+- SqliteDatabase.
+- DatabaseMigrator.
+- ShopRepository.
+- InventoryRepository.
+- StockEntryService.
+- StockSnapshotWriter.
+- AppSettingsRepository.
+- BillingRepository.
+- BillingService.
+- IBillingService.
+
+Maintain a coherent lifetime and dependency relationship.
+
+Avoid creating conflicting service instances or separate database paths.
+
+The BillingService must use the same shop database as inventory and shop configuration.
+
+3. Database migration
+
+Integrate Gemini's migration 002 correctly.
+
+It adds:
+
+- "medicine.gst_rate_configured"
+- "invoice_line.hsn_code_snapshot"
+
+Ensure:
+
+- Migration 001 remains preserved.
+- Migration 002 is embedded with the correct resource name.
+- DatabaseMigrator applies migrations in the correct order.
+- The schema version is updated.
+- Existing schema-version-1 databases migrate safely.
+- A newer database version is not accidentally downgraded.
+- Migration failure does not leave a falsely successful startup.
+
+Do not create duplicate columns or edit an already-shipped migration destructively.
+
+4. Startup and navigation
+
+After first-run shop setup:
+
+- The application should open directly to New Billing.
+- Billing navigation should display the actual BillingView.
+- Inventory & Stock must continue working.
+- Existing localization must remain functional.
+- Do not introduce an unnecessary dashboard.
+- No routine login must appear.
+
+Make sure application startup cannot silently open an unfinished placeholder when the billing implementation is available.
+
+---
+
+PART I — BILLING ENGINE REQUIREMENTS
+
+This section defines the core functional behaviour.
+
+Do not simplify these requirements.
+
+1. Medicine search
+
+Staff must be able to:
+
+- Search medicines by name.
+- Use a USB keyboard-wedge barcode scanner.
+- Search manually when the barcode is unknown.
+
+Known barcode mappings must be handled internally.
+
+Do not introduce a manual barcode-generation or barcode-registration screen.
+
+If an unknown barcode is scanned:
+
+- Show a clear "Medicine not found" message.
+- Permit manual medicine search.
+- Never accidentally add a previously selected medicine from stale search results.
+
+The barcode identifies a product, not necessarily its individual batch.
+
+Batch numbers and expiry dates remain separately managed.
+
+2. Search safety
+
+Use Qwen Batch 2R as the corrected baseline.
+
+Verify:
+
+- Changing the search query immediately invalidates outdated results.
+- Previous medicine selections cannot be accepted against a new query.
+- Stale asynchronous results cannot overwrite current results.
+- Fast scanner input cannot select an outdated medicine.
+- Search requests do not grow into an unbounded number of parallel operations.
+- Search is disabled during finalisation.
+
+3. Medicine cart
+
+The cart must:
+
+- Add selected medicines.
+- Allow quantity editing.
+- Remove selected rows.
+- Show readable quantities and amounts.
+- Merge duplicate entries for the same medicine where the backend expects a merged quantity.
+- Keep backend calculations authoritative.
+
+Use integer quantity thousandths.
+
+For example:
+
+- 1.000 unit = 1000.
+- 2.500 units = 2500.
+
+Do not use floating-point quantities for business calculations.
+
+4. FEFO batch allocation
+
+FEFO means First Expiry, First Out.
+
+The backend must select eligible batches in the earliest-expiry order.
+
+If one medicine requires more stock than its earliest-expiring batch contains, the system must allocate the remaining quantity from the next eligible batch.
+
+The UI must not let staff choose batches manually.
+
+Never sell:
+
+- Expired stock.
+- Quarantined stock.
+- Blocked stock.
+- Inactive medicines.
+- Zero-stock batches.
+- Otherwise ineligible stock.
+
+Eligibility must be checked again during invoice finalisation.
+
+Do not trust stock availability shown by an earlier search or preview.
+
+5. Invoice preview
+
+"PreviewInvoice" must:
+
+- Be read-only.
+- Use the same business calculations as finalisation.
+- Return backend-calculated totals.
+- Return the applicable tax breakdown.
+- Return FEFO allocation information.
+- Return validation issues.
+- Never deduct stock.
+- Never reserve stock.
+- Never permanently consume invoice numbering.
+- Never create an invoice record.
+- Never create audit or payment records.
+
+Every draft change must invalidate the previous preview immediately.
+
+Generate Invoice must remain unavailable until the preview matches the current draft.
+
+6. Invoice finalisation
+
+"FinalizeInvoice" must re-read the current database state.
+
+It must not trust preview prices, batch quantities or stock allocation.
+
+The following operations must occur in one SQLite transaction:
+
+1. Revalidate the draft.
+2. Re-read current medicine information.
+3. Re-read eligible batches.
+4. Recalculate the invoice.
+5. Revalidate payments.
+6. Allocate invoice numbering.
+7. Insert the invoice header.
+8. Insert invoice lines.
+9. Insert batch-level deductions.
+10. Insert stock movements.
+11. Insert payment records.
+12. Insert audit records.
+13. Mark portable stock data dirty and increment its generation.
+
+Only commit the transaction once all required operations succeed.
+
+If any business write fails:
+
+- Roll back the entire transaction.
+- Do not leave a partial invoice.
+- Do not leave a partial payment.
+- Do not deduct stock.
+- Do not consume the invoice sequence permanently.
+- Return a clear failure result.
+
+A successful invoice result may only be reported after a successful database commit.
+
+If the invoice is committed but the portable stock snapshot fails to refresh afterward, preserve the successful invoice result and return a warning. Never report that a committed invoice failed.
+
+7. Monetary precision
+
+Use integer paise stored as "long".
+
+Examples:
+
+- ₹1.00 = 100 paise.
+- ₹125.50 = 12550 paise.
+- ₹999.99 = 99999 paise.
+
+Never use "double" or "float" for financial calculations.
+
+Use explicit checked arithmetic and controlled rounding.
+
+Avoid silent numeric truncation.
+
+8. Discounts
+
+Discounts are excluded from the current billing contract.
+
+Do not introduce:
+
+- Manual line discounts.
+- Invoice-level discounts.
+- Percentage discount fields.
+- Coupon systems.
+- Promotional pricing.
+
+Keep the existing agreed zero-discount behaviour.
+
+9. Payment methods
+
+The supported payment methods are exactly:
+
+- Cash.
+- UPI.
+- Debit Card.
+- Credit Card.
+
+Split payment is supported by combining multiple tenders.
+
+There is no generic "Other" payment method.
+
+Example:
+
+Invoice total: ₹850.00
+
+- Cash: ₹300.00
+- UPI: ₹550.00
+- Remaining: ₹0.00
+
+For a fully paid invoice:
+
+"Sum(payment tenders) == Invoice payable total"
+
+Do not mark a bill fully paid when the amounts differ.
+
+Reject:
+
+- Negative payment amounts.
+- Invalid payment methods.
+- Overflow.
+- Missing required payment information.
+- Underpayment when the workflow requires a fully paid invoice.
+- Overpayment where the existing contract disallows it.
+
+The UI must not implement its own tax or monetary calculations.
+
+10. Customer information
+
+The following are optional for ordinary billing:
+
+- Name.
+- Phone number.
+- Address.
+- GSTIN.
+
+Do not make every customer field mandatory.
+
+Where verified applicable tax rules require recipient information, validate those specific cases.
+
+Do not invent legal requirements or hardcode unsupported assumptions.
+
+11. Invoice numbering and timestamps
+
+Maintain one sequential invoice-numbering system for this single Windows installation.
+
+Use the existing financial-year and invoice-prefix model.
+
+Invoice numbering must be transaction-safe.
+
+Two consecutive committed invoices must never receive the same number.
+
+A failed invoice must not permanently consume its sequence number.
+
+All invoice timestamps must be generated automatically by the system.
+
+Staff never type the invoice date or time manually.
+
+Preserve UTC timestamps and the necessary local-time representation.
+
+Do not change legally relevant numbering rules based on an unverified assumption. Flag any legal/CA-dependent serial-number constraint for review.
+
+---
+
+PART J — TAX CONFIGURATION
+
+This is a major integration requirement.
+
+The backend deliberately blocks billing when tax configuration is incomplete.
+
+That is correct. Do not bypass the protection.
+
+However, a real application needs a proper way to complete the configuration.
+
+1. Exact setting keys
+
+Use these exact keys:
+
+billing.tax_configured
+billing.tax_pricing_mode
+billing.default_supply_type
+billing.round_off_mode
+
+Allowed configuration values:
+
+Setting| Allowed values
+"billing.tax_configured"| "0" or "1"
+"billing.tax_pricing_mode"| "INCLUSIVE" or "EXCLUSIVE"
+"billing.default_supply_type"| "INTRA_STATE" or "INTER_STATE"
+"billing.round_off_mode"| "NONE" or "NEAREST_RUPEE"
+
+Do not rename them.
+
+2. Create a proper Tax Settings screen
+
+The existing Settings screen is incomplete.
+
+Implement a usable tax-configuration workflow that allows the shop to store the explicitly approved tax settings.
+
+The screen must:
+
+- Show the currently saved configuration.
+- Make unconfigured values visibly clear.
+- Explain the purpose of each setting in professional, straightforward English and Bengali.
+- Avoid asking the ordinary billing operator to make tax decisions during each invoice.
+- Save settings through a reliable transaction.
+- Write a corresponding audit entry.
+- Never silently choose a tax rate or pricing mode.
+
+Do not mark tax configuration complete until all required settings are valid and explicitly saved.
+
+3. Medicine-level GST configuration
+
+Each medicine must support:
+
+- HSN code.
+- GST rate in basis points.
+- Explicit GST configuration status.
+
+The field:
+
+"medicine.gst_rate_configured"
+
+must distinguish between:
+
+- Medicine with GST explicitly configured to 0%.
+- Medicine whose GST has not yet been configured.
+
+This distinction is mandatory.
+
+A migration default of "0" for the configuration flag must remain unconfigured.
+
+Do not treat every new medicine as 0% GST.
+
+Do not automatically enable GST configuration merely because a numerical rate field contains zero.
+
+The medicine-tax workflow must permit an explicitly configured 0% rate only when a responsible person has verified it.
+
+Do not invent GST rates or HSN classifications.
+
+4. Shop state
+
+The shop's state name and state code must be recorded correctly.
+
+The existing first-run setup must not silently allow incomplete state information to be used for tax invoices.
+
+Prefer state selection that derives a valid code from a verified state-code catalogue rather than asking users to memorise numeric codes.
+
+Do not fabricate a state-code mapping.
+
+If the mapping cannot be verified from the supplied material or an authoritative source, preserve the explicit configuration as unconfigured and report the missing verification.
+
+5. GSTIN validation and place of supply
+
+The existing Gemini implementation has a known weakness.
+
+Its GSTIN validation is only a basic character/length check.
+
+It also assumes that a customer's GSTIN state prefix is sufficient to decide the invoice's intra-state or inter-state treatment.
+
+Do not repeat this assumption blindly.
+
+You must distinguish:
+
+- GSTIN structural validation.
+- GSTIN checksum validation.
+- Shop registration state.
+- Customer registration state.
+- Actual legally applicable place of supply.
+- The resulting tax classification.
+
+A structurally valid GSTIN does not automatically establish every legal place-of-supply requirement.
+
+Implement structural/checksum verification only using a verified GSTIN specification or reliable implementation.
+
+Do not invent a checksum algorithm.
+
+Do not claim that format validation proves a GSTIN is active or legally valid.
+
+Most importantly, do not silently infer every invoice's place of supply from the first two characters of the customer's GSTIN.
+
+Any tax policy requiring CA approval must be explicitly identified and documented.
+
+If the frozen contract or current database does not provide sufficient information to determine a legally correct tax classification, do not silently calculate an assumed tax result.
+
+Fail safely for the affected case and clearly identify the exact additional policy or data that requires approval.
+
+Never invent tax rates, HSN codes, input tax credit eligibility or GST legal treatment.
+
+6. Tax auditability
+
+A tax-configuration change must be traceable.
+
+Record:
+
+- What setting or medicine changed.
+- The previous value.
+- The new value.
+- Automatic timestamp.
+- Related entity.
+
+Do not pretend to identify the employee because ORVA has no employee accounts.
+
+---
+
+PART K — INVOICE PREVIEW AND PAPER FORMATS
+
+The WPF preview must support:
+
+- 58 mm.
+- 80 mm.
+- A4.
+- A5.
+
+It must use only data supplied by the backend.
+
+Do not calculate prices, GST, totals, batches or stock in the preview control.
+
+Check every supplied invoice-preview binding.
+
+Ensure:
+
+- All bindings resolve.
+- All required resources exist.
+- Long medicine names wrap.
+- Text does not clip.
+- Quantities and prices remain readable.
+- Multi-batch allocation information is accurate.
+- Both English and Bengali resource dictionaries remain consistent.
+
+Known issue to inspect:
+
+The supplied Qwen A4/A5 multi-batch allocation layout may omit the unit rate for individual allocations.
+
+Correct this without duplicating information or inventing values.
+
+Do not claim direct printer integration is complete merely because an on-screen preview exists.
+
+This stage integrates the preview system. Actual printer-driver and hardware validation can be completed in a later stage.
+
+---
+
+PART L — CRITICAL UI FINALISATION SAFETY
+
+The supplied Qwen ViewModel has a known busy-state defect.
+
+Some controls and actions can still modify the invoice draft while finalisation is running.
+
+This must be corrected.
+
+During "IsBusy == true", all draft-changing paths must be blocked.
+
+That includes:
+
+- Medicine search.
+- Adding medicines.
+- Removing cart lines.
+- Quantity editing.
+- Customer name.
+- Customer phone.
+- Customer address.
+- Customer GSTIN.
+- Adding tenders.
+- Removing tenders.
+- Payment method editing.
+- Payment amount editing.
+- Payment reference editing.
+- Clear Bill.
+- ClearDraft.
+- New Bill where it would alter the saving draft.
+
+The UI must disable the corresponding controls.
+
+The ViewModel must also reject changes programmatically.
+
+Do not rely only on disabled XAML controls.
+
+Required command safety
+
+- "FinalizeCommand" must recheck eligibility when executed.
+- "NewBillCommand" must have a proper "CanExecute".
+- "ClearDraft()" must be guarded.
+- "ClearBill_Click" must be guarded.
+- Existing and new cart rows must respect busy state.
+- Existing and new tender rows must respect busy state.
+- Command states must refresh correctly.
+
+Keyboard Delete safety
+
+The Delete shortcut must only remove a cart row when focus is actually inside the cart control.
+
+It must never remove a selected cart item merely because a cart row remains selected while focus is on:
+
+- Medicine search.
+- Search results.
+- Customer details.
+- Payment controls.
+- Other application areas.
+
+Inspect the actual visual-tree behaviour.
+
+Do not rely on a fragile assumption that selection equals focus.
+
+Success handling
+
+After successful commit:
+
+- Preserve the invoice result.
+- Show the saved invoice number.
+- Show its committed total.
+- Show the actual timestamp.
+- Prevent accidental re-finalisation.
+- Offer Print Bill.
+- Offer New Bill.
+- Trigger the success animation only after commit.
+
+If finalisation fails:
+
+- Keep the draft recoverable.
+- Show understandable messages.
+- Never falsely display success.
+- Never lose the user's entered bill because of a simple validation error.
+
+---
+
+PART M — STOCK SNAPSHOT GENERATION SAFETY
+
+This is another confirmed defect.
+
+The existing application uses:
+
+"stock_snapshot_dirty"
+
+as a Boolean flag.
+
+Both InventoryRepository and Gemini BillingRepository mark it dirty inside their stock-changing transactions.
+
+That is better than marking it only after commit, and you must preserve this transactional behaviour.
+
+However, the StockSnapshotWriter has a concurrency race.
+
+The known race
+
+1. Snapshot writer reads database generation N.
+2. A new stock transaction commits generation N+1 and marks data dirty.
+3. The old snapshot writer completes.
+4. The old writer blindly writes dirty = 0.
+5. The file contains an older stock state but is incorrectly considered clean.
+
+This must be fixed.
+
+Required implementation
+
+Introduce a monotonically increasing snapshot generation.
+
+Use a setting such as:
+
+"stock_snapshot_generation"
+
+Rules:
+
+1. Every stock-changing transaction increments the generation inside the same transaction as the stock change.
+2. That transaction also marks "stock_snapshot_dirty = 1".
+3. Snapshot reading captures the database data and current generation from a consistent SQLite read transaction.
+4. The snapshot writer writes to a temporary file.
+5. It validates the exact generated file.
+6. It safely replaces the previous valid file.
+7. Before marking the snapshot clean, it checks that the current generation still matches the captured generation.
+8. Mark clean only when both generations are identical.
+9. If the generation changed, leave dirty = 1.
+10. Never report an old snapshot as current.
+
+Use appropriate locking to prevent concurrent snapshot writers within the application.
+
+Avoid creating unnecessary background thread systems or complex job queues.
+
+The snapshot writer must preserve the existing safe replacement and previous-file recovery behaviour.
+
+If the post-commit snapshot refresh fails:
+
+- The invoice remains successfully committed.
+- The database remains marked dirty.
+- A clear warning is returned.
+- The application can regenerate the file later.
+
+Writers to inspect
+
+At minimum:
+
+- InventoryRepository.SaveStockEntry.
+- Gemini BillingRepository.PersistInvoiceInTransaction.
+- StockSnapshotWriter.
+
+Identify all other existing stock-changing operations in the supplied source.
+
+Every existing stock-changing write must use the same generation mechanism.
+
+Do not increment the generation outside the business transaction and pretend that closes the crash-recovery gap.
+
+Boundary for this stage
+
+Implement generation-safe snapshot state.
+
+The full StockData V2 schema, barcode metadata expansion, import and export workflow belong to a later stage. Do not use this task as an excuse to create an unrelated portable-data redesign.
+
+---
+
+PART N — INVENTORY INTEGRATION
+
+Preserve the existing Inventory & Stock functionality.
+
+The inventory model must continue to support:
+
+- Medicine catalogue.
+- Batch-level stock.
+- Batch number.
+- Expiry month.
+- MRP.
+- Purchase price.
+- Available quantity.
+- Stock unit.
+- Batch status.
+- Low-stock threshold per medicine.
+- HSN and explicit GST configuration.
+
+Low-stock calculation must compare the medicine's threshold with its eligible usable stock across batches.
+
+Expired, quarantined and blocked stock must not inflate usable stock.
+
+Expiry warnings must be batch-specific:
+
+- 90 days.
+- 60 days.
+- 30 days.
+- Expired.
+
+No unnecessary per-batch low-stock settings.
+
+Add Stock workflow
+
+Preserve the simple workflow:
+
+Required:
+
+- Medicine name.
+- Batch number.
+- Expiry.
+- Quantity received.
+- Purchase price.
+- MRP.
+
+Optional:
+
+- Supplier / bought from as free text.
+- Invoice or document reference.
+
+Do not add a purchase-source dropdown.
+
+Do not require supplier registration.
+
+Do not generate fake supplier invoices.
+
+Preserve the distinction between documented and undocumented purchase information in the underlying records.
+
+Undocumented purchases must not silently become eligible for GST input tax credit.
+
+Any unresolved regulatory requirements must be reported for CA review instead of being invented.
+
+---
+
+PART O — WHAT NOT TO IMPLEMENT IN STAGE 1
+
+The following are future development stages, not the work order for this prompt.
+
+Do not attempt to build all of them now.
+
+1. Complete Sales Returns module
+
+Future stage.
+
+Its permanent requirements are:
+
+- Search original invoice.
+- Select returned medicine.
+- Enter quantity and reason.
+- Link to the original invoice.
+- Record refund or adjustment.
+- Quarantine returned items by default.
+- No automatic restocking without verification.
+- Expired/damaged returns must not become sellable.
+- Preserve full transaction history.
+
+2. Invoice cancellation
+
+Separate from a sales return.
+
+Future stage.
+
+Never implement cancellation by silently deleting the invoice.
+
+3. Full Records & Tax module
+
+Future stage.
+
+Includes invoice archive, sales registers, purchase registers, GST summaries, stock valuation and exports.
+
+4. Complete ShopBackup system
+
+Future stage.
+
+"ShopBackup.shopbackup" must eventually contain the complete business database and metadata.
+
+It must be separate from "StockData.json".
+
+5. StockData import and full V2 format
+
+Future stage.
+
+6. Subscription and licensing
+
+Separate commercial subsystem.
+
+The application may eventually offer:
+
+- Monthly.
+- Quarterly.
+- Annual.
+- One-time licence.
+
+Manual UPI payment verification and WhatsApp notification are part of the intended subscription workflow.
+
+The public GitHub licence registry is a separate licensing data source, not the business database.
+
+Do not put GitHub access tokens or administrator credentials in the distributed application.
+
+Do not implement licensing in this stage.
+
+7. Other future features
+
+Do not invent or add:
+
+- Android.
+- Cloud business database.
+- Sync.
+- Employee accounts.
+- Advanced accounting ERP.
+- Full ITR filing.
+- Unnecessary sales/profit dashboards.
+- Custom barcode generation.
+
+---
+
+PART P — CODE QUALITY REQUIREMENTS
+
+Treat this as commercial business software.
+
+Do not write code merely to satisfy the visible screen.
+
+C# requirements
+
+- C# 7.3 compatible.
+- Consistent naming.
+- Small, understandable methods.
+- Explicit error handling.
+- Checked arithmetic.
+- Correct disposal of database connections, commands and readers.
+- No unbounded background tasks.
+- No unhandled async-void exceptions.
+- No UI-thread database work that freezes the application.
+- No unnecessary service layers.
+- No duplicate business rules.
+
+Database requirements
+
+- Use SQLite transactions appropriately.
+- Preserve foreign keys.
+- Preserve audit history.
+- Preserve historical invoice information.
+- Avoid destructive migrations.
+- Avoid silent stock quantity overwrites.
+- Keep business values stored as integer paise and quantity thousandths.
+- Do not store money as SQLite REAL.
+- Preserve existing data.
+
+WPF requirements
+
+- Binding errors must be checked.
+- XAML resources must resolve.
+- Event handlers must exist.
+- Controls must be named consistently.
+- Navigation must not create duplicate ViewModels accidentally.
+- Timers must stop when the view is unloaded.
+- Keyboard interactions must be deliberate.
+- The interface must remain usable at ordinary Windows 10 laptop resolutions.
+
+Local operation
+
+No online service may be required for:
+
+- Application startup.
+- Billing.
+- Inventory.
+- Database access.
+- Invoice preview.
+- Stock deduction.
+- Existing-record retrieval.
+
+The application must remain fully usable without internet.
+
+---
+
+PART Q — DEVELOPMENT WORKFLOW
+
+Follow this sequence.
+
+Step 1 — Inspect
+
+Read the supplied files.
+
+Create a verified source inventory.
+
+Identify:
+
+- Baseline files.
+- Backend files.
+- WPF files.
+- Existing integration overlays.
+- Frozen interfaces.
+- Database migrations.
+- Tests.
+- Missing files.
+- Superseded files.
+
+Do not start editing until you understand which version is authoritative.
+
+Step 2 — Establish the permanent source tree
+
+Use the original WPF source as the base.
+
+Merge the actual Gemini backend and Qwen WPF contributions.
+
+Use Qwen Batch 2R, 3 and 4.
+
+Ignore Qwen Batch 2.
+
+Apply the useful files from Stage 1 patch v3 only after inspecting their contents.
+
+Preserve the complete original project structure.
+
+Step 3 — Integrate the backend
+
+Connect the database migration, billing service, repositories, application services and startup flow.
+
+Retain the frozen contract.
+
+Fix the identified backend defects within the contract.
+
+Step 4 — Integrate the WPF interface
+
+Add the actual billing view, view model, support classes, preview controls, resource dictionaries and code-behind.
+
+Correct all bindings and command-state issues.
+
+Step 5 — Complete tax configuration
+
+Make the explicit tax configuration usable.
+
+Do not invent legal rules or default rates.
+
+Step 6 — Correct snapshot generation
+
+Implement the generation counter in every relevant stock-changing transaction.
+
+Step 7 — Run the build and tests
+
+Build the application where a compatible Windows build environment is available.
+
+Run the actual backend tests.
+
+Add or improve focused tests where necessary.
+
+Step 8 — Package the deliverable
+
+Produce the complete integrated project.
+
+Do not return only modified files without enough context to reconstruct the application.
+
+---
+
+PART R — REQUIRED TESTS
+
+This is a development task, but the implemented code must be tested.
+
+At minimum, test these cases:
+
+Billing
+
+- Search medicine.
+- Add one medicine.
+- Add multiple medicines.
+- Add the same medicine more than once.
+- Change quantity.
+- Remove a medicine.
+- Generate a valid preview.
+- Confirm preview changes when the draft changes.
+- Confirm stale preview cannot finalise.
+- Confirm invalid medicine cannot finalise.
+
+FEFO
+
+- Multiple batches with different expiry dates.
+- Quantity spanning two batches.
+- Expired earliest batch.
+- Quarantined batch.
+- Blocked batch.
+- Insufficient eligible stock.
+
+Payments
+
+- Cash.
+- UPI.
+- Debit card.
+- Credit card.
+- Split cash + UPI.
+- Underpayment.
+- Overpayment.
+- Invalid amount.
+- Empty tenders.
+
+Transaction integrity
+
+Force an error after:
+
+- Invoice sequence increment.
+- Invoice header insertion.
+- Invoice line insertion.
+- Stock deduction.
+- Payment insertion.
+- Audit insertion.
+
+Confirm that the full transaction rolls back.
+
+Confirm that no partial invoice or stock deduction remains.
+
+UI finalisation
+
+- Attempt New Bill while busy.
+- Attempt Clear Bill while busy.
+- Attempt editing quantity while busy.
+- Attempt editing payment while busy.
+- Press Delete while focus is on search results.
+- Press Delete while focus is inside the cart.
+- Double-click Generate Invoice.
+- Press Enter repeatedly.
+- Close or unload the billing view during an async operation.
+
+Snapshot generation
+
+Simulate the generation race.
+
+Confirm that:
+
+- A newer stock transaction increments the generation.
+- An older writer cannot mark the newer generation clean.
+- Dirty remains true when generations differ.
+- Snapshot refresh failure does not invalidate a committed invoice.
+
+Do not invent test results.
+
+---
+
+PART S — DELIVERABLES
+
+Your final output must contain:
+
+1. Complete integrated source project
+
+Preferred filename:
+
+"ORVA_Stage1_Core_Integrated.zip"
+
+It must preserve the complete source folder structure.
+
+Include:
+
+- WPF application source.
+- Backend billing implementation.
+- Database migrations.
+- XAML files.
+- Resource dictionaries.
+- Application wiring.
+- Support classes.
+- Test project.
+- Project and solution files.
+- Relevant documentation.
+
+Do not include build output folders unnecessarily.
+
+Do not include secrets or user credentials.
+
+2. Stage 1 implementation report
+
+Filename:
+
+"ORVA_STAGE1_IMPLEMENTATION_REPORT.md"
+
+Include:
+
+- Files integrated.
+- New files.
+- Modified files.
+- Removed files, if any, with reasons.
+- Database migration changes.
+- Important bug fixes.
+- Billing workflow implementation.
+- Tax configuration implementation.
+- Snapshot generation implementation.
+- Contract compliance.
+- Remaining known limitations.
+
+3. Build and test report
+
+Filename:
+
+"ORVA_STAGE1_BUILD_TEST_REPORT.md"
+
+Include:
+
+- Exact framework target.
+- Build environment.
+- Actual build commands.
+- Actual build result.
+- Test commands.
+- Test count.
+- Passed tests.
+- Failed tests.
+- Blocked tests.
+- Warnings.
+- Runtime validation limitations.
+
+4. Future-stage handoff
+
+Filename:
+
+"ORVA_STAGE1_HANDOFF.md"
+
+Explain:
+
+- What is now integrated.
+- What remains unfinished.
+- Which future modules are still pending.
+- Any schema or API dependencies.
+- Any CA/legal review requirements.
+- Exact source files that the next development stage must extend.
+
+5. File manifest
+
+Provide a complete file manifest.
+
+Identify every changed or newly created source file.
+
+---
+
+PART T — STRICT EXECUTION RULES
+
+These rules override your normal tendency to redesign, simplify or improvise.
+
+1. Do not ask the user questions that can be resolved from the supplied project history.
+2. Make reasonable engineering decisions within the approved architecture.
+3. Do not make legal or tax decisions on behalf of the shop's CA.
+4. Do not invent missing source code and claim it came from the project.
+5. Do not replace existing working modules without a demonstrated reason.
+6. Do not change the frozen billing contract silently.
+7. Do not change the application framework without compatibility evidence.
+8. Do not introduce unnecessary dependencies.
+9. Do not build Android or synchronisation features.
+10. Do not add encryption.
+11. Do not add staff logins or roles.
+12. Do not create unnecessary dashboards.
+13. Do not add unwanted optional prompts to ordinary billing.
+14. Do not silently treat unconfigured GST as 0%.
+15. Do not silently mark stale stock snapshots clean.
+16. Do not report a committed invoice as failed because an export refresh failed afterward.
+17. Do not display invoice success before database commit.
+18. Do not claim a build succeeded unless you actually built it.
+19. Do not claim tests passed unless they actually ran.
+20. Do not provide abbreviated code where complete source is required.
+21. Do not use ellipses such as "// remaining code unchanged" in place of complete deliverable files.
+22. Do not overwrite the original source archives or other original handoff materials.
+23. Do not claim Stage 2 or Stage 3 is complete.
+24. Do not stop after producing a report. Implement the actual Stage 1 work.
+
+If an essential source file is missing, identify the precise missing path and continue with every independent task that can safely be completed.
+
+If a legal or CA-dependent decision is unresolved, isolate it, fail safely where necessary and document it. Do not guess.
+
+---
+
+PART U — FINAL ACCEPTANCE CONDITIONS
+
+Stage 1 is complete only when all of the following are true:
+
+- The permanent source tree is assembled.
+- Gemini backend and Qwen WPF code are integrated.
+- Migration 002 is correctly wired.
+- Application services are registered correctly.
+- Shop setup leads into New Billing.
+- Medicine search works.
+- Billing preview works.
+- Preview invalidation works.
+- FEFO allocation works.
+- Payment validation works.
+- Finalisation is transactional.
+- Stock deduction is accurate.
+- Invoice numbering is transaction-safe.
+- Timestamps are automatic.
+- UI editing is blocked while finalising.
+- Delete keyboard behaviour is safe.
+- Tax settings are explicit.
+- Unconfigured GST never becomes an assumed 0%.
+- GST and place-of-supply assumptions are not silently invented.
+- Snapshot generation is race-safe.
+- Original inventory functionality remains intact.
+- All supplied resource bindings resolve.
+- The project is buildable, or any exact environment blocker is documented.
+- Actual tests are executed where possible.
+- Complete source and reports are delivered.
+
+FINAL INSTRUCTION
+
+Build ORVA, not another proposal for ORVA.
+
+Preserve the approved architecture.
+
+Respect the users who will operate the software.
+
+Prioritise correctness, speed, clarity and reliability.
+
+The result must be a permanent part of the final commercial application, not a disposable implementation that will later be thrown away.
+
+Begin Stage 1 development now.
